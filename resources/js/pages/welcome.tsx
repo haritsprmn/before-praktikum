@@ -1,97 +1,91 @@
-import { useState } from "react";
+import { useForm } from '@inertiajs/react';
 
-type FakultasKey = "fsm" | "ft" | "fisip" | "feb" | "fh";
+import InputNama from '@/components/nama';
+import InputNim from '@/components/nim';
+import InputProdi from '@/components/ProdiInput';
+import InputFakultas from '@/components/InputFakultas';
 
-export default function Welcome() {
-    const [selectedFakultas, setSelectedFakultas] = useState<FakultasKey | "">("");
+export default function welcome() {
+    const { data, setData, post, processing, errors } = useForm({
+        nama: '',
+        nim: '',
+        prodi: '',
+        fakultas: '',
+    });
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const name = formData.get("name");
-        const fakultas = formData.get("fakultas");
-        const jurusan = formData.get("jurusan");
-        console.log("Submitted name:", name);
-        console.log("Submitted fakultas:", fakultas);
-        console.log("Submitted jurusan:", jurusan);
-    }
-    const fakultas: Record<FakultasKey, string> = {
-        fsm: "Fakultas Sains dan Matematika",
-        ft: "Fakultas Teknik",
-        fisip: "Fakultas Ilmu Sosial dan Ilmu Politik",
-        feb: "Fakultas Ekonomi dan Bisnis",
-        fh: "Fakultas Hukum",
+    const submit = (e: React.FormEvent) => {
+        e.preventDefault();
+
+        post('/mahasiswa');
     };
 
-    const jurusan: Record<FakultasKey, Record<string, string>> = {
-        fsm: {
-            matematika: "Matematika",
-            fisika: "Fisika",
-            kimia: "Kimia",
-            biologi: "Biologi",
-        },
-        ft: {
-            teknikSipil: "Teknik Sipil",
-            teknikMesin: "Teknik Mesin",
-            teknikElektro: "Teknik Elektro",
-            teknikIndustri: "Teknik Industri",
-        },
-        fisip: {
-            ilmuKomunikasi: "Ilmu Komunikasi",
-            sosiologi: "Sosiologi",
-            antropologi: "Antropologi",
-            ilmuPolitik: "Ilmu Politik",
-        },
-        feb: {
-            manajemen: "Manajemen",
-            akuntansi: "Akuntansi",
-            ekonomiPembangunan: "Ekonomi Pembangunan",
-            ekonomiSyariah: "Ekonomi Syariah",
-        },
-        fh: {
-            hukumPidana: "Hukum Pidana",
-            hukumPerdata: "Hukum Perdata",
-            hukumInternasional: "Hukum Internasional",
-            hukumAdministrasiNegara: "Hukum Administrasi Negara",
-        },
-    };
     return (
-        <>
-            <Head title="Welcome" />
-            <form onSubmit={handleSubmit}>
-                <input
-                    id="name"
-                    type="text"
-                    name="name"
-                    placeholder="Enter your name"
-                />
-                <select
-                    id="fakultas"
-                    name="fakultas"
-                    onChange={(e) => setSelectedFakultas(e.target.value as FakultasKey | "")}
+        <div className="mx-auto max-w-xl p-6">
+            <h1 className="mb-6 text-2xl font-bold">
+                Tambah Mahasiswa
+            </h1>
+
+            <form onSubmit={submit} className="space-y-4">
+                <div>
+                    <InputNama
+                        value={data.nama}
+                        onChange={(value) => setData('nama', value)}
+                    />
+
+                    {errors.nama && (
+                        <p className="text-sm text-red-500">
+                            {errors.nama}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <InputNim
+                        value={data.nim}
+                        onChange={(value) => setData('nim', value)}
+                    />
+
+                    {errors.nim && (
+                        <p className="text-sm text-red-500">
+                            {errors.nim}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <InputProdi
+                        value={data.prodi}
+                        onChange={(value) => setData('prodi', value)}
+                    />
+
+                    {errors.prodi && (
+                        <p className="text-sm text-red-500">
+                            {errors.prodi}
+                        </p>
+                    )}
+                </div>
+
+                <div>
+                    <InputFakultas
+                        value={data.fakultas}
+                        onChange={(value) => setData('fakultas', value)}
+                    />
+
+                    {errors.fakultas && (
+                        <p className="text-sm text-red-500">
+                            {errors.fakultas}
+                        </p>
+                    )}
+                </div>
+
+                <button
+                    type="submit"
+                    disabled={processing}
+                    className="w-full rounded bg-blue-600 px-4 py-2 text-white"
                 >
-                    <option value="">Select Faculty</option>
-
-                    {Object.entries(fakultas).map(([key, value]) => (
-                        <option key={key} value={key}>
-                            {value}
-                        </option>
-                    ))}
-                </select>
-                <select id="jurusan" name="jurusan">
-                    <option value="">Select Major</option>
-
-                    {selectedFakultas &&
-                        Object.entries(jurusan[selectedFakultas]).map(
-                            ([key, value]) => (
-                                <option key={key} value={key}>
-                                    {value}
-                                </option>
-                            ),
-                        )}
-                </select>
-                <button type="submit">Submit</button>
+                    {processing ? 'Menyimpan...' : 'Simpan'}
+                </button>
             </form>
-        </>
+        </div>
     );
 }
