@@ -1,16 +1,16 @@
-type nimInput = {
+type NimInputProps = {
     value: string;
     onChange: (value: string) => void;
 };
 
-export default function nimInput({
+export default function NimInput({
     value,
     onChange,
-}: nimInput) {
+}: NimInputProps) {
     return (
         <div>
             <label
-                htmlFor="NIM"
+                htmlFor="nim"
                 className="NIM"
             >
                 Nomor Induk Mahasiswa
